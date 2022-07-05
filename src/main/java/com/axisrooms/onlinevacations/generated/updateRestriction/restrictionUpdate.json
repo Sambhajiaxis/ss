@@ -1,0 +1,30 @@
+{
+  "auth": {
+    "key": "key123"
+  },
+  "data": [
+    {
+      "roomDetails": [
+        {
+          "ratePlanDetails": [
+            {
+              "ratePlanId": "123456",
+              "restrictions": {
+                "periods": [
+                  {
+                    "endDate": "2018-02-05",
+                    "startDate": "2018-02-05"
+                  }
+                ],
+                "type": "Status/COA/COD/MinLos/MaxLos",
+                "value": "Open/Close/2"
+              }
+            }
+          ],
+          "roomId": "20000121"
+        }
+      ],
+      "propertyId": "WQTgOhGLxuIV"
+    }
+  ]
+}
