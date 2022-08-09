@@ -1,0 +1,23 @@
+
+
+{   "message": "message for success/failure",
+  "status": "success/failure",
+  "roomtypes": [
+    {
+      "room_id": 4,
+      "name": "Deluxe Room",
+      "display_name": "Deluxe Room",
+      "room_type": "Deluxe Room",
+      "status": 1
+
+
+    },
+    {
+      "room_id": 5,
+      "name": "Suite Room",
+      "display_name": "Suite Room",
+      "room_type": "Suite Room",
+      "status": 1
+    }
+  ]
+}

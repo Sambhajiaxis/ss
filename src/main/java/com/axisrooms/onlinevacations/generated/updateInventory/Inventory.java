@@ -13,12 +13,12 @@ import java.time.LocalDate;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Inventory {
-    @JsonProperty("endDate")
+    @JsonProperty("end_date")
     @JsonFormat(pattern = Constants.DATE_PATTERN)
-    private LocalDate endDate;
-    @JsonProperty("free")
-    private Integer      free;
+    private LocalDate end_date;
+    @JsonProperty("inventory")
+    private Integer      inventory;
     @JsonFormat(pattern = Constants.DATE_PATTERN)
-    @JsonProperty("startDate")
-    private LocalDate    startDate;
+    @JsonProperty("start_date")
+    private LocalDate    start_date;
 }

@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 public class Description {
     @JsonProperty("id")
-    private String id;
+    private String Id;
     @JsonProperty("name")
     private String name;
+
 }

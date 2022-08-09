@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class RatePlanConfiguration {
+
     @JsonProperty("ratePlanId")
     private String ratePlanId;
     @JsonProperty("ratePlanName")
@@ -17,4 +18,7 @@ public class RatePlanConfiguration {
     private String commission;
     @JsonProperty("tax")
     private String tax;
+
+
+
 }

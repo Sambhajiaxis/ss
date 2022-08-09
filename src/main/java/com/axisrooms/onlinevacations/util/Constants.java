@@ -2,7 +2,9 @@ package com.axisrooms.onlinevacations.util;
 
 public class Constants {
     public static final String SUCCESS = "Success";
-    public static final String DATE_PATTERN = "yyyy-MM-dd";
+    public static final String DATE_PATTERN = "dd/MM/yyyy";
+
+
 
     public static final String OPEN = "Open";
     public static final String CLOSE = "Close";

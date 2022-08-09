@@ -26,7 +26,7 @@ import javax.validation.Valid;
  * Add all the api controllers, url mappings here
  */
 @RestController
-@RequestMapping(value = "/v1/onlinevacationsota")
+@RequestMapping(value = "/v1/onlinevacations")
 @Api(description = "Api to communicate with onlinevacations-ota Microservice from Channel Manager")
 @Slf4j
 public class OnlinevacationsOta {
@@ -52,6 +52,7 @@ public class OnlinevacationsOta {
         try {
             Utils.isValid(token, hotelId, acceptedToken);
             RoomResponse roomResponse = otaManager.getRoomList(hotelId);
+
             responseEntity = new ResponseEntity<>(roomResponse, HttpStatus.OK);
         } catch (Throwable throwable) {
             log.error("Encountered exception while getting rooms", throwable);
@@ -108,7 +109,7 @@ public class OnlinevacationsOta {
             log.error("Encountered exception while update inventory", throwable);
             InventoryResponse inventoryResponse = new InventoryResponse();
             inventoryResponse.setMessage(throwable.getMessage());
-            inventoryResponse.setHttpStatusCode(HttpStatus.SERVICE_UNAVAILABLE.value());
+         //   inventoryResponse.setHttpStatusCode(HttpStatus.SERVICE_UNAVAILABLE.value());
             responseEntity = new ResponseEntity<>(inventoryResponse, HttpStatus.SERVICE_UNAVAILABLE);
         }
         return responseEntity;

@@ -7,6 +7,6 @@ import lombok.Data;
 public class InventoryResponse {
     @JsonProperty("message")
     private String message;
-    @JsonProperty("httpStatusCode")
+   @JsonProperty("httpStatusCode")
     private int httpStatusCode;
 }

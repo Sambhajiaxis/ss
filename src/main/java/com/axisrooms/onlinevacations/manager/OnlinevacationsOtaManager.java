@@ -1,12 +1,14 @@
 package com.axisrooms.onlinevacations.manager;
 
+
 import com.axisrooms.onlinevacations.bean.*;
+
 import com.axisrooms.onlinevacations.generated.RatePlanInfo.RatePlanInfoRequest;
 import com.axisrooms.onlinevacations.generated.RatePlanInfo.RatePlanInfoResponse;
 import com.axisrooms.onlinevacations.generated.RatePlanInfo.Validity;
-import com.axisrooms.onlinevacations.generated.productInfo.Datum;
-import com.axisrooms.onlinevacations.generated.productInfo.ProductInfoRequest;
-import com.axisrooms.onlinevacations.generated.productInfo.ProductInfoResponse;
+import com.axisrooms.onlinevacations.generated.getRoom.Datum;
+import com.axisrooms.onlinevacations.generated.getRoom.RoomInfoRequest;
+import com.axisrooms.onlinevacations.generated.getRoom.RoomInfoResponse;
 import com.axisrooms.onlinevacations.generated.updateInventory.Auth;
 import com.axisrooms.onlinevacations.generated.updateInventory.Data;
 import com.axisrooms.onlinevacations.generated.updateInventory.InventoryUpdate;
@@ -35,6 +37,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.axisrooms.onlinevacations.util.Constants.SUCCESS;
@@ -45,24 +48,25 @@ import static com.axisrooms.onlinevacations.util.Constants.SUCCESS;
 @Service
 @Slf4j
 @Primary
-public class OnlinevacationsOtaManager implements OTAManager {
+public class
+OnlinevacationsOtaManager implements OTAManager {
 
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${getRoomsUrl}")
+    @Value("https://extranet.onlinevacations.in/api/room-types")
     private String getRoomsUrl;
 
-    @Value("${getUpdateInvUrl}")
+    @Value("https://extranet.onlinevacations.in/api/inventory-update")
     private String getUpdateInvUrl;
 
-    @Value("${getUpdatePriceUrl}")
+    @Value("https://extranet.onlinevacations.in/api/rate-update")
     private String getUpdatePriceUrl;
 
-    @Value("${getProductInfoUrl}")
+    @Value("https://extranet.onlinevacations.in/api/get-rateplans")
     private String getProductInfoUrl;
 
-    @Value("${getUpdateRestrictionUrl}")
+    @Value("https://extranet.onlinevacations.in/api/stopsell")
     private String getUpdateRestrictionUrl;
 
    /* @Value("${onlinevacations-ota.communication.userName}")
@@ -79,8 +83,8 @@ public class OnlinevacationsOtaManager implements OTAManager {
 
     @Override
     public RoomResponse getRoomList(String hotelId) throws Exception {
-        ProductInfoRequest productInfoRequest = buildProductInfoRequest(hotelId);
-        ProductInfoResponse productInfoResponse = getProductInfo(productInfoRequest);
+        RoomInfoRequest productInfoRequest = buildProductInfoRequest(hotelId);
+        RoomInfoResponse productInfoResponse = getProductInfo(productInfoRequest);
         RoomResponse roomResponse = buildRoomResponse(productInfoResponse);
         return roomResponse;
     }
@@ -110,9 +114,9 @@ public class OnlinevacationsOtaManager implements OTAManager {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.setContentType(MediaType.APPLICATION_JSON);
                 HttpEntity<String> entity = new HttpEntity<>(jsonString, httpHeaders);
-                ResponseEntity<String> responseEntity = restTemplate
-                        .postForEntity(getUpdateInvUrl, entity, String.class);
-                String responseJson = responseEntity.getBody();
+               ResponseEntity<String> responseEntity = restTemplate
+                       .postForEntity(getUpdateInvUrl, entity, String.class);
+               String responseJson = responseEntity.getBody();
                 log.info("Response for update inventory....." + responseJson);
                 Utils.addOTAResponse(responseJson, transactionLog);
                 InventoryUpdateResponse inventoryUpdateResponse = MarshalUnmarshalUtils.deserialize(responseJson, InventoryUpdateResponse.class);
@@ -138,7 +142,7 @@ public class OnlinevacationsOtaManager implements OTAManager {
         try {
             Utils.addCMRequest(priceRequest, transactionLog);
             for (UpdatePriceOTA updatePriceOTA : buildUpdatePriceRequests(priceRequest)) {
-                String jsonString = MarshalUnmarshalUtils.serializeWithPropertyNaming(updatePriceOTA);
+                String jsonString = MarshalUnmarshalUtils.serializeWithPropertyNaming(updatePriceOTA).toLowerCase();
                 log.info("update price request:: " + jsonString);
                 Utils.addOTARequest(jsonString, transactionLog);
                 HttpHeaders httpHeaders = new HttpHeaders();
@@ -148,10 +152,15 @@ public class OnlinevacationsOtaManager implements OTAManager {
                 String responseJson = responseEntity.getBody();
                 log.info("Response for update price....." + responseJson);
                 Utils.addOTAResponse(responseJson, transactionLog);
+                 if (responseJson.contains("S001"))
+                 {
+
                 PriceUpdateResponse priceUpdateResponse = MarshalUnmarshalUtils.deserialize(responseJson, PriceUpdateResponse.class);
+
+
                 priceResponse = buildPriceResponse(priceUpdateResponse);
                 Utils.addCMResponse(priceResponse, transactionLog);
-            }
+            }}
         } catch (Throwable throwable) {
             Utils.addOTAResponse(throwable, transactionLog);
             throw throwable;
@@ -180,11 +189,18 @@ public class OnlinevacationsOtaManager implements OTAManager {
                         .postForEntity(getUpdateRestrictionUrl, entity, String.class);
                 String responseJson = responseEntity.getBody();
                 log.info("Response for update restrcition....." + responseJson);
+
                 Utils.addOTAResponse(responseJson, transactionLog);
+
+                if(responseJson.contains("S001"))
+                {
+
                 RestrictionUpdateResponse restrictionUpdateResponse = MarshalUnmarshalUtils.deserialize(responseJson, RestrictionUpdateResponse.class);
+                restrictionUpdateResponse.setMessage("StopSell Updated Successfully");
+                restrictionUpdateResponse.setStatus("success");
                 restrictionResponse = buildRestrictionResponse(restrictionUpdateResponse);
                 Utils.addCMResponse(restrictionResponse, transactionLog);
-            }
+            }}
 
         } catch (Throwable throwable) {
             log.error(throwable.toString(), throwable);
@@ -204,30 +220,46 @@ public class OnlinevacationsOtaManager implements OTAManager {
         for (InventoryData eachInventoryData : inventoryRequest.getData()) {
             InventoryUpdate inventoryUpdate = new InventoryUpdate();
             inventoryUpdates.add(inventoryUpdate);
-            Auth auth = new Auth();
-            inventoryUpdate.setAuth(auth);
-            auth.setKey(apiKey);
-            Data data = new Data();
-            inventoryUpdate.setData(data);
-            data.setPropertyId(inventoryRequest.getHotelId());
-            data.setRoomId(eachInventoryData.getRoomId());
+           inventoryUpdate.setKey(apiKey);
+            inventoryUpdate.setProperty(Integer.valueOf(inventoryRequest.getHotelId()));
+            inventoryUpdate.setRoom(Integer.valueOf(eachInventoryData.getRoomId()));
             List<com.axisrooms.onlinevacations.generated.updateInventory.Inventory> inventories = new ArrayList<>();
-            data.setInventory(inventories);
+
             for (Inventory eachInventory : eachInventoryData.getInventories()) {
                 com.axisrooms.onlinevacations.generated.updateInventory.Inventory inventory = new com.axisrooms.onlinevacations.generated.updateInventory.Inventory();
-                inventories.add(inventory);
-                inventory.setEndDate(eachInventory.getEndDate());
-                inventory.setStartDate(eachInventory.getStartDate());
-                inventory.setFree(eachInventory.getInventory());
+
+               /* SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                inventoryUpdate.setStart_date( sdf.format(eachInventory.getStartDate()));*/
+
+                inventoryUpdate.setInventory(eachInventory.getInventory());
+               inventoryUpdate.setStart_date(eachInventory.getStartDate());
+               inventoryUpdate.setEnd_date(eachInventory.getEndDate());
+             //   inventoryUpdate.setEnd_date(sdf.format(eachInventory.getEndDate()));
+
+
             }
         }
-        return inventoryUpdates;
-    }
+            return inventoryUpdates;
+        }
 
     private InventoryResponse buildInventoryResponse(InventoryUpdateResponse inventoryUpdateResponse) {
         InventoryResponse inventoryResponse = new InventoryResponse();
+
+
+        if (Objects.nonNull(inventoryUpdateResponse)) {
+            inventoryUpdateResponse.setstatus("success");
+            inventoryUpdateResponse.setmessage("succesfully fetch ");
+        }
+        else
+        {
+            inventoryUpdateResponse.setstatus("failure");
+            inventoryUpdateResponse.setmessage("unable to  fetch ");
+        }
+
+
+
         if (inventoryUpdateResponse.getstatus().equalsIgnoreCase("success")) {
-            inventoryResponse.setMessage("success");
+            inventoryResponse.setMessage("Availability Updated");
             inventoryResponse.setHttpStatusCode(HttpStatus.OK.value());
         } else {
             inventoryResponse.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -238,11 +270,22 @@ public class OnlinevacationsOtaManager implements OTAManager {
 
     private PriceResponse buildPriceResponse(PriceUpdateResponse priceUpdateResponse) {
         PriceResponse priceResponse = new PriceResponse();
-        if (priceUpdateResponse.getstatus().equalsIgnoreCase("success")) {
-            priceResponse.setMessage("success");
+        if (Objects.nonNull(priceUpdateResponse)) {
+            priceUpdateResponse.setstatus("success");
+            priceUpdateResponse.setmessage("success");
+        }
+        else
+        {
+            priceUpdateResponse.setstatus("failure");
+            priceUpdateResponse.setmessage("unable to  fetch ");
+        }
+
+        if (priceUpdateResponse.getmessage().equalsIgnoreCase("success")) {
+            priceResponse.setMessage("Rate Updated ");
             priceResponse.setHttpStatusCode(HttpStatus.OK.value());
+
         } else {
-            priceResponse.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+           priceResponse.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             priceResponse.setMessage(priceUpdateResponse.getmessage());
         }
         return priceResponse;
@@ -251,32 +294,61 @@ public class OnlinevacationsOtaManager implements OTAManager {
     private List<UpdatePriceOTA> buildUpdatePriceRequests(PriceRequest priceRequest)
             throws OccupancyNotSupportedException {
         List<UpdatePriceOTA> updatePriceOTAList = new ArrayList<>();
-        String hotelId = priceRequest.getHotelId();
+        UpdatePriceOTA updatePriceOTA = new UpdatePriceOTA();
+      //  String hotelId = priceRequest.getHotelId();
         for (PriceData eachPriceData : priceRequest.getData()) {
             for (RoomDetail roomDetail : eachPriceData.getRoomDetails()) {
+                updatePriceOTA.setRoom(Integer.valueOf(roomDetail.getRoomId()));
                 for (RatePlanDetail ratePlanDetail : roomDetail.getRatePlanDetails()) {
                     try {
                         for (com.axisrooms.onlinevacations.bean.Rate eachRate : ratePlanDetail.getRates()) {
                             //multiple apis here
-                            UpdatePriceOTA updatePriceOTA = new UpdatePriceOTA();
+                      //      UpdatePriceOTA updatePriceOTA = new UpdatePriceOTA();
                             updatePriceOTAList.add(updatePriceOTA);
+
                             com.axisrooms.onlinevacations.generated.updatePrice.Auth auth = new com.axisrooms.onlinevacations.generated.updatePrice.Auth();
-                            updatePriceOTA.setauth(auth);
+                          //  updatePriceOTA.setauth(auth);
                             auth.setkey(apiKey);
-                            com.axisrooms.onlinevacations.generated.updatePrice.Data data = new com.axisrooms.onlinevacations.generated.updatePrice.Data();
-                            updatePriceOTA.setdata(data);
-                            data.setpropertyId(hotelId);
-                            data.setroomId(roomDetail.getRoomId());
-                            data.setrateplanId(ratePlanDetail.getRatePlanId());
+
+                            //my code
+                            updatePriceOTA.setkey(apiKey);
+
+
+
+                          //  com.axisrooms.onlinevacations.generated.updatePrice.Data data = new com.axisrooms.onlinevacations.generated.updatePrice.Data();
+                     //       updatePriceOTA.setdata(data);
+                       //     data.setpropertyId(hotelId);
+
+                            //my code
+                          //  inventoryUpdate.setProperty(Integer.valueOf(inventoryRequest.getHotelId()));
+                            updatePriceOTA.setProperty(Integer.valueOf(priceRequest.getHotelId()));
+                        //    updatePriceOTA.setRoom(roomDetail.getRoomId());
+                            updatePriceOTA.setMealplan(Integer.valueOf(ratePlanDetail.getRatePlanId()));
+
+
                             List<Rate> rates = new ArrayList<>();
-                            data.setrate(rates);
+                         //   data.setrate(rates);
                             Map<String, String> priceMap = eachRate.getPrices();
-                            Rate rate = new Rate();
-                            rates.add(rate);
-                            rate.setendDate(eachRate.getEndDate());
-                            rate.setstartDate(eachRate.getStartDate());
+                         //   Rate rate = new Rate();
+                           // rates.add(rate);
+
+
+                            //my code
+
+                            updatePriceOTA.setStart_date(eachRate.getStartDate().toLowerCase());
+
+                            updatePriceOTA.setEnd_date(eachRate.getEndDate().toLowerCase());
+
+
+
+
+                           // rate.setendDate(eachRate.getEndDate());
+                            //rate.setstartDate(eachRate.getStartDate());
+                           // updatePriceOTA.setExtra_adults("50000");
+                            //updatePriceOTA.setKids("2000");
+
                             for (String occupancy : priceMap.keySet()) {
-                                rate.setPriceByOccupancyName(occupancy, priceMap.get(occupancy));
+                                updatePriceOTA.setPriceByOccupancyName(occupancy, priceMap.get(occupancy));
                             }
                         }
                     } catch (OccupancyNotSupportedException e) {
@@ -305,16 +377,17 @@ public class OnlinevacationsOtaManager implements OTAManager {
         return ratePlanResponse;
     }
 
-    private ProductInfoRequest buildProductInfoRequest(String hotelId) {
-        ProductInfoRequest productInfoRequest = new ProductInfoRequest();
-        com.axisrooms.onlinevacations.generated.productInfo.Auth auth = new com.axisrooms.onlinevacations.generated.productInfo.Auth();
+    private RoomInfoRequest buildProductInfoRequest(String hotelId) {
+        RoomInfoRequest productInfoRequest = new RoomInfoRequest();
+        com.axisrooms.onlinevacations.generated.getRoom.Auth auth = new com.axisrooms.onlinevacations.generated.getRoom.Auth();
         productInfoRequest.setAuth(auth);
         auth.setKey(apiKey);
-        productInfoRequest.setPropertyId(hotelId);
+        productInfoRequest.setKey(apiKey);
+        productInfoRequest.setProperty(hotelId);
         return productInfoRequest;
     }
 
-    private ProductInfoResponse getProductInfo(ProductInfoRequest productInfoRequest) throws Exception {
+    private RoomInfoResponse getProductInfo(RoomInfoRequest productInfoRequest) throws Exception {
         String jsonRequest = MarshalUnmarshalUtils.serialize(productInfoRequest);
         log.info("Input request to fetch rooms: -> " + jsonRequest);
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -325,31 +398,53 @@ public class OnlinevacationsOtaManager implements OTAManager {
 //        String dummyData=readUsingBufferedReader("/home/tech/Desktop/otatestfile/getProductInfo.txt");
         log.info("Axisrooms ota getRooms Response=" + response);
         try{
-            return MarshalUnmarshalUtils.deserialize(response, ProductInfoResponse.class);
+            return MarshalUnmarshalUtils.deserialize(response, RoomInfoResponse.class);
         }catch(Exception e){
             log.info(e.getMessage());
         }
         finally {
-            return MarshalUnmarshalUtils.deserialize(response, ProductInfoResponse.class);
+            return MarshalUnmarshalUtils.deserialize(response, RoomInfoResponse.class);
         }
     }
 
     /*
     axisagent-commonOta conversion
      */
-    private RoomResponse buildRoomResponse(ProductInfoResponse productInfoResponse) throws Exception {
+    private RoomResponse buildRoomResponse(RoomInfoResponse productInfoResponse) throws Exception {
         RoomResponse roomResponse = new RoomResponse();
+         if (!productInfoResponse.getRoomtypes().isEmpty())
+         {
+             productInfoResponse.setStatus("success");
+             productInfoResponse.setMessage("succesfully fetch ");
+         }
+         else
+         {
+             productInfoResponse.setStatus("failure");
+             productInfoResponse.setMessage("unable to  fetch ");
+         }
+
+
         if (Objects.nonNull(productInfoResponse)) {
             log.info("productInfoResponse - " + productInfoResponse);
             log.info("productInfoResponse - " + productInfoResponse.getMessage());
             log.info("productInfoResponse - " + productInfoResponse.getStatus());
-            if (productInfoResponse.getStatus().contains("success") || productInfoResponse.getStatus().contains("Success")) {
-                Set<Description> descriptions = new HashSet<>();
-                for (Datum datum : productInfoResponse.getData()) {
+
+          if (productInfoResponse.getStatus().contains("success") || productInfoResponse.getStatus().contains("Success")) {
+
+              Set<Description> descriptions = new HashSet<>();
+                for (Datum datum : productInfoResponse.getRoomtypes()) {
                     Description description = new Description();
                     descriptions.add(description);
                     description.setId(datum.getId());
+                    System.out.print(datum.getId());
                     description.setName(datum.getName());
+
+                 /* description.setDisplay_name(datum.getDisplay_name());
+                    description.setRoom_type(datum.getRoom_type());
+                    description.setStatus(datum.getStatus());
+*/
+
+
                 }
                 roomResponse.setDescriptions(descriptions);
                 roomResponse.setMessage(SUCCESS);
@@ -371,8 +466,9 @@ public class OnlinevacationsOtaManager implements OTAManager {
         com.axisrooms.onlinevacations.generated.RatePlanInfo.Auth auth = new com.axisrooms.onlinevacations.generated.RatePlanInfo.Auth();
         ratePlanInfoRequest.setAuth(auth);
         auth.setKey(apiKey);
-        ratePlanInfoRequest.setPropertyId(hotelId);
-        ratePlanInfoRequest.setRoomId(roomId);
+        ratePlanInfoRequest.setKey(apiKey);
+        ratePlanInfoRequest.setProperty(hotelId);
+        ratePlanInfoRequest.setRoom(roomId);
         return ratePlanInfoRequest;
     }
 
@@ -393,30 +489,69 @@ public class OnlinevacationsOtaManager implements OTAManager {
 
     private RatePlanResponse buildRatePlansResponse(RatePlanInfoResponse ratePlanInfoResponse, String roomId) {
         RatePlanResponse ratePlanResponse = new RatePlanResponse();
+
+        if (!ratePlanInfoResponse.getData().isEmpty())
+        {
+            ratePlanInfoResponse.setStatus("success");
+            ratePlanInfoResponse.setMessage("succesfully fetch ");
+        }
+        else
+        {
+            ratePlanInfoResponse.setStatus("failure");
+            ratePlanInfoResponse.setMessage("unable to  fetch ");
+        }
+
+
         if (Objects.nonNull(ratePlanInfoResponse)) {
             if (ratePlanInfoResponse.getStatus().equalsIgnoreCase("success")) {
                 ratePlanResponse.setHttpStatusCode(HttpStatus.OK.value());
                 ratePlanResponse.setMessage("success");
+
                 List<RatePlanDescription> ratePlanDescriptions = new ArrayList<>();
                 ratePlanResponse.setRatePlanDescriptions(ratePlanDescriptions);
                 RatePlanDescription ratePlanDescription = new RatePlanDescription();
                 ratePlanDescriptions.add(ratePlanDescription);
                 ratePlanDescription.setRoomId(roomId);
                 List<RatePlanConfiguration> ratePlanConfigurations = new ArrayList<>();
-                ratePlanDescription.setConfigurations(ratePlanConfigurations);
+
+                ratePlanDescription.setConfiguration(ratePlanConfigurations);
                 for (com.axisrooms.onlinevacations.generated.RatePlanInfo.Datum datum : ratePlanInfoResponse.getData()) {
+                    ratePlanResponse.setProperty(ratePlanInfoResponse.getProperty());
+                    ratePlanResponse.setRoom(ratePlanInfoResponse.getRoom());
                     RatePlanConfiguration ratePlanConfiguration = new RatePlanConfiguration();
+
+
+
+
+                    List<String> Occupancy=new ArrayList<>();
+                    Occupancy.add("single");
+                    Occupancy.add("Double ");
+                    Occupancy.add("EXTRAADULT");
+                    Occupancy.add("EXTRACHILD");
+                    datum.setOccupancy(Occupancy);
+
+
+
+
+
                     ratePlanConfigurations.add(ratePlanConfiguration);
+                    /*ratePlanConfiguration.setRatePlanId(datum.getId());
+                    ratePlanConfiguration.setRatePlanName(datum.getName());*/
+
                     if (datum.getCommissionPerc() != null) {
                         ratePlanConfiguration.setCommission(datum.getCommissionPerc());
                     }
-                    if (datum.getRatePlanId() != null) {
+                    /*if (datum.getRatePlanId() != null) {
                         ratePlanConfiguration.setRatePlanId(datum.getRatePlanId());
+                    }*/
+                    if(datum.getId()!=null)
+                    {
+                        ratePlanConfiguration.setRatePlanId(datum.getId());
                     }
                     // ratePlanConfiguration.setRatePlanId("653");
                     log.info("rateplanId----------" + ratePlanConfiguration.getRatePlanId());
-                    if (datum.getRatePlanName() != null && datum.getRatePlanName() != "") {
-                        ratePlanConfiguration.setRatePlanName(datum.getRatePlanName());
+                    if (datum.getName()!= null && datum.getName() != "") {
+                        ratePlanConfiguration.setRatePlanName(datum.getName());
                         log.info("ratePlanName if non null or non empty-----" + ratePlanConfiguration.getRatePlanName());
                     } else {
                         ratePlanConfiguration.setRatePlanName(datum.getRatePlanId());
@@ -437,7 +572,7 @@ public class OnlinevacationsOtaManager implements OTAManager {
                     List<String> occupancies = new ArrayList<>();
                     ratePlanDescription.setOccupancies(occupancies);
 
-                    for (String occupancy : datum.getOccupancy()) {
+                 for (String occupancy : datum.getOccupancy()) {
                         occupancies.add(occupancy);
                     }
                 }
@@ -451,7 +586,6 @@ public class OnlinevacationsOtaManager implements OTAManager {
         }
         return ratePlanResponse;
     }
-
     //new code
 
     private List<RestrictionUpdate> buildRestrictionUpdateRequest(RestrictionRequest restrictionRequest) throws JsonProcessingException {
@@ -461,28 +595,38 @@ public class OnlinevacationsOtaManager implements OTAManager {
             RestrictionUpdate restrictionUpdate = new RestrictionUpdate();
             restrictionUpdates.add(restrictionUpdate);
             com.axisrooms.onlinevacations.generated.updateRestriction.Auth auth = new com.axisrooms.onlinevacations.generated.updateRestriction.Auth();
-            restrictionUpdate.setAuth(auth);
-            auth.setKey(apiKey);
+           // restrictionUpdate.setAuth(auth);
+            restrictionUpdate.setKey(apiKey);
+         //   auth.setKey(apiKey);
             List<com.axisrooms.onlinevacations.generated.updateRestriction.Data> data = new ArrayList<>();
-            restrictionUpdate.setData(data);
+          // restrictionUpdate.setData(data);
             for(com.axisrooms.onlinevacations.bean.RestrictionData eachData:restrictionRequest.getData()){
                 com.axisrooms.onlinevacations.generated.updateRestriction.Data datas = new com.axisrooms.onlinevacations.generated.updateRestriction.Data();
-                data.add(datas);
-                datas.setPropertyId(restrictionRequest.getHotelId());
+                //data.add(datas);
+                //datas.setPropertyId(restrictionRequest.getHotelId());
+
+                restrictionUpdate.setProperty(restrictionRequest.getHotelId());
+
                 List<com.axisrooms.onlinevacations.generated.updateRestriction.RoomDetails> roomDetails = new ArrayList<>();
-                datas.setRoomDetails(roomDetails);
+               // datas.setRoomDetails(roomDetails);
                 for (RoomDetail eachRoomDetail : eachRestrictionData.getRoomDetails()) {
                     com.axisrooms.onlinevacations.generated.updateRestriction.RoomDetails roomDetail = new com.axisrooms.onlinevacations.generated.updateRestriction.RoomDetails();
-                    roomDetails.add(roomDetail);
-                    roomDetail.setRoomId(eachRoomDetail.getRoomId());
+                    //roomDetails.add(roomDetail);
+                   // roomDetail.setRoomId(eachRoomDetail.getRoomId());
+
+                    restrictionUpdate.setRoom(eachRoomDetail.getRoomId());
+
                     List<com.axisrooms.onlinevacations.generated.updateRestriction.RatePlanDetails> ratePlanDetails = new ArrayList<>();
-                    roomDetail.setRatePlanDetails(ratePlanDetails);
+                  //  roomDetail.setRatePlanDetails(ratePlanDetails);
                     for (RatePlanDetail eachRateplanDetail : eachRoomDetail.getRatePlanDetails()) {
                         com.axisrooms.onlinevacations.generated.updateRestriction.RatePlanDetails rateplanDetail = new com.axisrooms.onlinevacations.generated.updateRestriction.RatePlanDetails();
-                        ratePlanDetails.add(rateplanDetail);
-                        rateplanDetail.setRatePlanId(eachRateplanDetail.getRatePlanId());
+                       // ratePlanDetails.add(rateplanDetail);
+                        //rateplanDetail.setRatePlanId(eachRateplanDetail.getRatePlanId());
+
+                        restrictionUpdate.setMealplan(eachRateplanDetail.getRatePlanId());
+
                         com.axisrooms.onlinevacations.generated.updateRestriction.Restrictions restrictionsDetails = new Restrictions();
-                        rateplanDetail.setRestrictions(restrictionsDetails);
+                       // rateplanDetail.setRestrictions(restrictionsDetails);
                         if(eachRateplanDetail.getRestrictions().getType().equalsIgnoreCase("COA") || eachRateplanDetail.getRestrictions().getType().equalsIgnoreCase("COD")){
                             if(eachRateplanDetail.getRestrictions().getValue().equalsIgnoreCase("true")){
                                 restrictionsDetails.setValue("Close");
@@ -494,12 +638,19 @@ public class OnlinevacationsOtaManager implements OTAManager {
                         }
                         restrictionsDetails.setType(eachRateplanDetail.getRestrictions().getType());
                         List<com.axisrooms.onlinevacations.generated.updateRestriction.Periods> periods = new ArrayList<>();
-                        restrictionsDetails.setPeriods(periods);
+                     //   restrictionsDetails.setPeriods(periods);
                         for (Period eachPeriod : eachRateplanDetail.getRestrictions().getPeriods()) {
                             com.axisrooms.onlinevacations.generated.updateRestriction.Periods periodsDetail = new com.axisrooms.onlinevacations.generated.updateRestriction.Periods();
-                            periods.add(periodsDetail);
-                            periodsDetail.setStartDate(eachPeriod.getStartDate());
-                            periodsDetail.setEndDate(eachPeriod.getEndDate());
+                           // periods.add(periodsDetail);
+                            //periodsDetail.setStartDate(eachPeriod.getStartDate());
+                            //periodsDetail.setEndDate(eachPeriod.getEndDate());
+                           // restrictionUpdate.setStop_sell("1");
+                            restrictionUpdate.setStop_sell(restrictionsDetails.getValue());
+
+
+                            restrictionUpdate.setStart_date(eachPeriod.getStartDate());
+                            restrictionUpdate.setEnd_date(eachPeriod.getEndDate());
+
                         }
 
                         //adding another rateplan for maxlos
@@ -527,7 +678,7 @@ public class OnlinevacationsOtaManager implements OTAManager {
     private RestrictionResponse buildRestrictionResponse(RestrictionUpdateResponse restrictionUpdateResponse) {
         RestrictionResponse restrictionResponse = new RestrictionResponse();
         if (restrictionUpdateResponse.getStatus().equalsIgnoreCase("success")) {
-            restrictionResponse.setMessage("success");
+            restrictionResponse.setMessage("StopSell Updated Successfully");
             restrictionResponse.setHttpStatusCode(HttpStatus.OK.value());
         } else {
             restrictionResponse.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
