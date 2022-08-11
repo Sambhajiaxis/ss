@@ -45,9 +45,9 @@ public class PriceRequestValidator implements ConstraintValidator<ValidPriceRequ
                     Preconditions.checkArgument(!StringUtils.isEmpty(ratePlanDetail.getRatePlanId()), "RatePlanId cannot be null or empty");
                     List<Rate> rateList = ratePlanDetail.getRates();
                     Preconditions.checkArgument(!CollectionUtils.isEmpty(rateList),"Rates section cannot be null or empty");
-                    /*for(Rate rate : rateList){
+                    for(Rate rate : rateList){
                         Utils.validateDates(rate.getStartDate(), rate.getEndDate());
-                    }*/
+                    }
                 }
             }
         } catch (Throwable throwable) {

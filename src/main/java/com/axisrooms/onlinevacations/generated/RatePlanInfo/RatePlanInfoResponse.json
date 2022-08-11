@@ -1,9 +1,6 @@
-
 {
   "message": "message for success/failure",
   "status": "success/failure",
-  "property": "Hotel XYZ",
-  "room": "Family Room (Interconnected Room)",
   "data": [
     {
       "rateplanId": "15",

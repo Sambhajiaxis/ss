@@ -10,7 +10,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PriceUpdateResponse {
     private String message;
-   private String status;
+    private String status;
 
     public String getmessage() {
         return message;
@@ -20,7 +20,7 @@ public class PriceUpdateResponse {
         this.message = message;
     }
 
-   public String getstatus() {
+    public String getstatus() {
         return status;
     }
 

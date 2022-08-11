@@ -1,5 +1,7 @@
 {
-  "key": "api key",
-  "property": 2,
-  "room": 4
+  "auth": {
+    "key": "key123"
+  },
+  "propertyId": "hotelId",
+  "roomId": "roomId"
 }

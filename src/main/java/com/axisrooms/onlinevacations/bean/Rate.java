@@ -19,12 +19,12 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Rate {
     @JsonProperty("startDate")
-   // @JsonFormat(pattern = Constants.DATE_PATTERN)
-    private String startDate;
+    @JsonFormat(pattern = Constants.DATE_PATTERN)
+    private LocalDate startDate;
 
     @JsonProperty("endDate")
-  //  @JsonFormat(pattern = Constants.DATE_PATTERN)
-    private String endDate;
+    @JsonFormat(pattern = Constants.DATE_PATTERN)
+    private LocalDate endDate;
     @JsonProperty("tax")
     private Integer tax;
     @JsonProperty("commission")

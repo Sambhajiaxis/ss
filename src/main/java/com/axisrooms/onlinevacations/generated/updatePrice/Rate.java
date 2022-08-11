@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -43,24 +45,24 @@ public class Rate {
     private String    EXTRA_CHILD_ABOVE_FIVE;
     private String    EXTRACHILD2;
     private String    EXTRACHILD3;
-  //  @JsonFormat(pattern = Constants.DATE_PATTERN)
-    private String endDate;
- //   @JsonFormat(pattern = Constants.DATE_PATTERN)
-    private String startDate;
+    @JsonFormat(pattern = Constants.DATE_PATTERN)
+    private LocalDate endDate;
+    @JsonFormat(pattern = Constants.DATE_PATTERN)
+    private LocalDate    startDate;
 
-    public String getendDate() {
+    public LocalDate getendDate() {
         return endDate;
     }
 
-    public void setendDate(String endDate) {
+    public void setendDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
-    public String getstartDate() {
+    public LocalDate getstartDate() {
         return startDate;
     }
 
-    public void setstartDate(String startDate) {
+    public void setstartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 

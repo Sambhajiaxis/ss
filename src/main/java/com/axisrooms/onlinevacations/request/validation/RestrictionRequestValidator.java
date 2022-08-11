@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,10 +56,9 @@ public class RestrictionRequestValidator implements ConstraintValidator<ValidIRe
                         Preconditions.checkArgument(!StringUtils.isEmpty(ratePlanDetail.getRestrictions().getType()), "Restriction type cannot be null or empty");
                         Preconditions.checkArgument(CMRestriction.getRestrictionNames().contains(ratePlanDetail.getRestrictions().getType()), "Restriction type should be any of these, "+CMRestriction.getRestrictionNames().toString());
                         Preconditions.checkArgument(!CollectionUtils.isEmpty(ratePlanDetail.getRestrictions().getPeriods()), "Restriction Periods block cannot be null or empty");
-                        /*for(Period period : ratePlanDetail.getRestrictions().getPeriods()){
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                         //   Utils.validateDates(sdf.format(period.getStartDate()),(sdf.format( period.getEndDate())));
-                        }*/
+                        for(Period period : ratePlanDetail.getRestrictions().getPeriods()){
+                            Utils.validateDates(period.getStartDate(), period.getEndDate());
+                        }
                     }
                 }
             }

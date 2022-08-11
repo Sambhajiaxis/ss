@@ -18,10 +18,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Period {
     @JsonProperty("startDate")
-   // @JsonFormat(pattern = Constants.DATE_PATTERN)
-    private String startDate;
+    @JsonFormat(pattern = Constants.DATE_PATTERN)
+    private LocalDate startDate;
 
     @JsonProperty("endDate")
-  //  @JsonFormat(pattern = Constants.DATE_PATTERN)
-    private String endDate;
+    @JsonFormat(pattern = Constants.DATE_PATTERN)
+    private LocalDate endDate;
 }

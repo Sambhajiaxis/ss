@@ -3,7 +3,6 @@ package com.axisrooms.onlinevacations.generated.RatePlanInfo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -13,18 +12,10 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class RatePlanInfoResponse {
+    @JsonProperty("data")
+    private List<Datum> Data;
     @JsonProperty("message")
     private String Message;
     @JsonProperty("status")
     private String Status;
-      @JsonProperty("property")
-    private String property;
-      @JsonProperty("room")
-    private String room;
-      @JsonProperty("mealplans")
-      List<Datum> Data;
-
-
 }
-
-
