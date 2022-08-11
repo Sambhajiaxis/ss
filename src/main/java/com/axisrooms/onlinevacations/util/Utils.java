@@ -87,19 +87,19 @@ public class Utils {
         transactionLog.setCmData(detail);
     }
 
-    public static void validateDates(LocalDate startDate, LocalDate endDate) {
+   /* public static void validateDates(String startDate, String endDate) {
         Preconditions.checkArgument(startDate != null, "StartDate cannot be null");
         Preconditions.checkArgument(endDate != null, "EndDate cannot be null");
         Preconditions.checkArgument(validateStartAndEndDates(startDate, endDate), "StartDate or EndDate is in the past.");
     }
 
-    public static boolean validateStartAndEndDates(LocalDate startDate, LocalDate endDate) {
+    public static boolean validateStartAndEndDates(String startDate, String endDate) {
         DateTimeFormatter df = DateTimeFormatter.ofPattern(Constants.DATE_PATTERN);
         LocalDate todaysDate = LocalDate.parse(LocalDate.now().toString(), df);
         return (startDate.isEqual(todaysDate) || startDate.isAfter(todaysDate))
                 && (endDate.isEqual(todaysDate) || endDate.isAfter(todaysDate))
                 && (endDate.isEqual(startDate) || endDate.isAfter(startDate));
-    }
+    }*/
 
     public static String getBasicAuthentication(String userName, String password){
         String credentails = userName + ":" + password;

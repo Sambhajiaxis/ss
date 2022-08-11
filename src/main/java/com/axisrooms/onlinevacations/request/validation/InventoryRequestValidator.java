@@ -15,6 +15,8 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
+
+
 @Component
 @Slf4j
 public class InventoryRequestValidator implements ConstraintValidator<ValidInventoryRequest, InventoryRequest> {
@@ -44,9 +46,9 @@ public class InventoryRequestValidator implements ConstraintValidator<ValidInven
                     Preconditions.checkArgument(!StringUtils.isEmpty(inventoryData.getRoomId()), "RoomId cannot be null or empty");
                     Preconditions.checkArgument(!CollectionUtils.isEmpty(inventoryData.getRatePlans()),"RatePlans cannot be null or empty for Wandertrails OTA");
                     Preconditions.checkArgument(!CollectionUtils.isEmpty(inventoryData.getInventories()), "Inventory block cannot be null or empty");
-                    for (Inventory inventory : inventoryData.getInventories()) {
+                  /*  for (Inventory inventory : inventoryData.getInventories()) {
                         Utils.validateDates(inventory.getStartDate(), inventory.getEndDate());
-                    }
+                    }*/
                 }
             }catch(Throwable throwable){
                 log.error(throwable.getMessage());
@@ -57,3 +59,5 @@ public class InventoryRequestValidator implements ConstraintValidator<ValidInven
         return result;
     }
 }
+
+

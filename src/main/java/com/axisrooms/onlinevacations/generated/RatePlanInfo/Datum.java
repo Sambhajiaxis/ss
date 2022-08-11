@@ -11,6 +11,14 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @lombok.Data
 public class Datum {
+    @JsonProperty("id")
+    private String Id;
+
+    @JsonProperty("name")
+    private String Name;
+
+
+
     @JsonProperty("commissionPerc")
     private String CommissionPerc;
     @JsonProperty("occupancy")
@@ -25,4 +33,14 @@ public class Datum {
     private Validity Validity;
     @JsonProperty("currency")
     private String Currency;
+
+
+
+
+
+
+
+
+
+
 }

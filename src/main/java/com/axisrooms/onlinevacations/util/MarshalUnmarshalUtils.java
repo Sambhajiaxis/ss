@@ -119,7 +119,7 @@ public class MarshalUnmarshalUtils {
         try {
             if (!StringUtils.isEmpty(data)) {
                 ObjectMapper objectMapper = ObjectMapperSingleton.get();
-                JavaTimeModule javaTimeModule = getJavaTimeModule();
+               JavaTimeModule javaTimeModule = getJavaTimeModule();
                 objectMapper.registerModule(javaTimeModule);
                 objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
                 objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);

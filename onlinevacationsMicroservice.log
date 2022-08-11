@@ -1,0 +1,3 @@
+2022-07-05T10:56:23 [main] INFO  com.axisrooms.onlinevacations.OnlinevacationsMicroServiceApplication logStarting(48) - Starting OnlinevacationsMicroServiceApplication on axisrooms-hp with PID 28978 (/home/axisrooms/workspace/onlinevacations/build/classes/java/main started by axisrooms in /home/axisrooms/workspace/onlinevacations)
+2022-07-05T10:56:23 [main] INFO  com.axisrooms.onlinevacations.OnlinevacationsMicroServiceApplication logStartupProfileInfo(593) - No active profile set, falling back to default profiles: default
+2022-07-05T10:56:26 [main] INFO  com.axisrooms.onlinevacations.OnlinevacationsMicroServiceApplication logStarted(57) - Started OnlinevacationsMicroServiceApplication in 3.079 seconds (JVM running for 3.869)

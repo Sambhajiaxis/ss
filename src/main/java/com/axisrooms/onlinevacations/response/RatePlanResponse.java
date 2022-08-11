@@ -11,6 +11,11 @@ public class RatePlanResponse {
     private String message;
     @JsonProperty("httpStatusCode")
     private int httpStatusCode;
+    @JsonProperty("property")
+    private String property;
+    @JsonProperty("room")
+    private String room;
+
     @JsonProperty("ratePlanDescriptions")
     private List<RatePlanDescription> ratePlanDescriptions;
 }
