@@ -7,9 +7,6 @@ import java.util.List;
 
 @Data
 public class RatePlanDescription {
-
-
-
     @JsonProperty("roomId")
     private String                      roomId;
     @JsonProperty("currency")
@@ -18,8 +15,4 @@ public class RatePlanDescription {
     private List<String>             occupancies;
     @JsonProperty("configurations")
     private List<RatePlanConfiguration> configuration;
-
-
-
-
 }

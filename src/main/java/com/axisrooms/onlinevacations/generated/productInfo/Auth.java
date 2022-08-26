@@ -1,5 +1,5 @@
 
-package com.axisrooms.onlinevacations.generated.getRoom;
+package com.axisrooms.onlinevacations.generated.productInfo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

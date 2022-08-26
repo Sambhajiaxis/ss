@@ -1,5 +1,5 @@
 
-package com.axisrooms.onlinevacations.generated.getRoom;
+package com.axisrooms.onlinevacations.generated.productInfo;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -11,16 +11,10 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class Datum {
+
     @JsonProperty("room_id")
     private String Id;
     @JsonProperty("name")
     private String Name;
-   /* @JsonProperty("display_name")
-    private String Display_name;
-    @JsonProperty("display_name")
-    private String Room_type;
-    @JsonProperty("status")
-    private String status;
-*/
-
 }
+

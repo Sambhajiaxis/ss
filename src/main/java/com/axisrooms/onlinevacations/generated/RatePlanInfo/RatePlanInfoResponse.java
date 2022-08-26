@@ -3,7 +3,6 @@ package com.axisrooms.onlinevacations.generated.RatePlanInfo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -17,14 +16,10 @@ public class RatePlanInfoResponse {
     private String Message;
     @JsonProperty("status")
     private String Status;
-      @JsonProperty("property")
+    @JsonProperty("property")
     private String property;
-      @JsonProperty("room")
+    @JsonProperty("room")
     private String room;
-      @JsonProperty("mealplans")
-      List<Datum> Data;
-
-
+    @JsonProperty("mealplans")
+    List<Datum> Data;
 }
-
-

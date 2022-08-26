@@ -20,18 +20,18 @@ public class RatePlanDetail {
     private String          ratePlanId;
     @JsonProperty("ratePlanName")
     private String          ratePlanName;
-    @JsonProperty("rateType")
-    private String          rateType;
+    //@JsonProperty("rateType")
+    //private String          rateType;
     @JsonProperty("currency")
     private String          currency;
-    @JsonProperty("days")
-    private List<Day>       days;
+    //@JsonProperty("days")
+    //private List<Day>       days;
     @JsonProperty("rates")
     private List<Rate>      rates;
-    @JsonProperty("closeOutDates")
-    private List<Period>    closeOutDates;
-    @JsonProperty("inventories")
-    private List<Inventory> inventories;
+    //@JsonProperty("closeOutDates")
+    //private List<Period>    closeOutDates;
+    //@JsonProperty("inventories")
+    //private List<Inventory> inventories;
     @JsonProperty("restrictions")
     private Restriction     restrictions;
 }

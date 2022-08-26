@@ -18,7 +18,4 @@ public class RatePlanConfiguration {
     private String commission;
     @JsonProperty("tax")
     private String tax;
-
-
-
 }

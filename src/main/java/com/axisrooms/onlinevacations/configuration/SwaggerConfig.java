@@ -28,9 +28,9 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("OnlinevacationsMicroservice")
+                .title("onlinevacationsMicroService")
                 .version("0.1.0")
-                .description("OnlinevacationsMicroservice is an application that communicates with onlinevacations. It is a layer between the CM and the OTA.")
+                .description("onlinevacationsMicroService is an application that communicates with onlinevacations. It is a layer between the CM and the OTA.")
                 .build();
     }
 

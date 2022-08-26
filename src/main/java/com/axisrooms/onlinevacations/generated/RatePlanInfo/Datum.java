@@ -35,12 +35,4 @@ public class Datum {
     private String Currency;
 
 
-
-
-
-
-
-
-
-
 }

@@ -14,7 +14,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Data {
-
     @JsonProperty("key")
     private String key;
     /*@JsonProperty("inventory")
@@ -25,11 +24,10 @@ public class Data {
     private String room;
     @JsonFormat(pattern = Constants.DATE_PATTERN)
     @JsonProperty("start_date")
-    private LocalDate    start_date;
+    private LocalDate start_date;
     @JsonProperty("end_date")
     @JsonFormat(pattern = Constants.DATE_PATTERN)
     private LocalDate end_date;
     @JsonProperty("inventory")
     private Integer      inventory;
-
 }

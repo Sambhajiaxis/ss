@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @lombok.Data
 public class UpdatePriceOTA {
-   /* @JsonProperty("auth")
+  /* @JsonProperty("auth")
     private Auth auth;
     @JsonProperty("data")
     private Data data;

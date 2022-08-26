@@ -9,6 +9,7 @@ import com.axisrooms.onlinevacations.util.MarshalUnmarshalUtils;
 import com.axisrooms.onlinevacations.util.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +53,6 @@ public class OnlinevacationsOta {
         try {
             Utils.isValid(token, hotelId, acceptedToken);
             RoomResponse roomResponse = otaManager.getRoomList(hotelId);
-
             responseEntity = new ResponseEntity<>(roomResponse, HttpStatus.OK);
         } catch (Throwable throwable) {
             log.error("Encountered exception while getting rooms", throwable);
@@ -101,6 +101,7 @@ public class OnlinevacationsOta {
     )
     public ResponseEntity<?> updateInventory(@Valid @RequestBody InventoryRequest inventoryRequest) {
         log.info("inside update inventory api for onlinevacations ota");
+        log.info("CM request body"+new Gson().toJson(inventoryRequest));
         ResponseEntity<?> responseEntity;
         try {
             InventoryResponse inventoryResponse = otaManager.updateInventory(inventoryRequest);
@@ -109,7 +110,7 @@ public class OnlinevacationsOta {
             log.error("Encountered exception while update inventory", throwable);
             InventoryResponse inventoryResponse = new InventoryResponse();
             inventoryResponse.setMessage(throwable.getMessage());
-         //   inventoryResponse.setHttpStatusCode(HttpStatus.SERVICE_UNAVAILABLE.value());
+            inventoryResponse.setHttpStatusCode(HttpStatus.SERVICE_UNAVAILABLE.value());
             responseEntity = new ResponseEntity<>(inventoryResponse, HttpStatus.SERVICE_UNAVAILABLE);
         }
         return responseEntity;

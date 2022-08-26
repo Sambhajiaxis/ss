@@ -15,12 +15,12 @@ import org.springframework.util.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 
 @Slf4j
 public class RestrictionRequestValidator implements ConstraintValidator<ValidIRestrictionRequest, RestrictionRequest> {
+
 
     @Value("${microservice.communication.token}")
     private String acceptedToken;

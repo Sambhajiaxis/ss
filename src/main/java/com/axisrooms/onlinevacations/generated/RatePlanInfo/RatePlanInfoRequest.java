@@ -10,6 +10,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class RatePlanInfoRequest {
+
     @JsonProperty("auth")
     private Auth auth;
     @JsonProperty("key")

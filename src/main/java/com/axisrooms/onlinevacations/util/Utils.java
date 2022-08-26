@@ -61,9 +61,9 @@ public class Utils {
         transactionLog.setId(id);
         transactionLog.setHotelId(hotelId);
         transactionLog.setOperation(operation);
-        transactionLog.setOta(OTA.ONLINEVACATIONS);
+        transactionLog.setOta(OTA.onlinevacations);
         transactionLog.setDate(LocalDate.now());
-        transactionLog.setService(ServiceName.ONLINEVACATIONS_SERVICE);
+        transactionLog.setService(ServiceName.onlinevacations_service);
         transactionLog.setRoomId(roomId);
     }
 
@@ -87,19 +87,19 @@ public class Utils {
         transactionLog.setCmData(detail);
     }
 
-   /* public static void validateDates(String startDate, String endDate) {
+    public static void validateDates(LocalDate startDate, LocalDate endDate) {
         Preconditions.checkArgument(startDate != null, "StartDate cannot be null");
         Preconditions.checkArgument(endDate != null, "EndDate cannot be null");
         Preconditions.checkArgument(validateStartAndEndDates(startDate, endDate), "StartDate or EndDate is in the past.");
     }
 
-    public static boolean validateStartAndEndDates(String startDate, String endDate) {
+    public static boolean validateStartAndEndDates(LocalDate startDate, LocalDate endDate) {
         DateTimeFormatter df = DateTimeFormatter.ofPattern(Constants.DATE_PATTERN);
         LocalDate todaysDate = LocalDate.parse(LocalDate.now().toString(), df);
         return (startDate.isEqual(todaysDate) || startDate.isAfter(todaysDate))
                 && (endDate.isEqual(todaysDate) || endDate.isAfter(todaysDate))
                 && (endDate.isEqual(startDate) || endDate.isAfter(startDate));
-    }*/
+    }
 
     public static String getBasicAuthentication(String userName, String password){
         String credentails = userName + ":" + password;

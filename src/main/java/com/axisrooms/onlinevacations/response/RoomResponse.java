@@ -8,9 +8,11 @@ import java.util.Set;
 @Data
 public class RoomResponse {
     @JsonProperty("message")
-    private String message;
+     private String message;
     @JsonProperty("httpStatusCode")
     private int httpStatusCode;
     @JsonProperty("descriptions")
     private Set<Description> descriptions;
+
+
 }

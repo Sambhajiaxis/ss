@@ -18,9 +18,9 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Periods extends Period {
     @JsonProperty("endDate")
-   // @JsonFormat(pattern = Constants.DATE_PATTERN)
+    // @JsonFormat(pattern = Constants.DATE_PATTERN)
     private String endDate;
-//    @JsonFormat(pattern = Constants.DATE_PATTERN)
+    //    @JsonFormat(pattern = Constants.DATE_PATTERN)
     @JsonProperty("startDate")
     private String startDate;
 }

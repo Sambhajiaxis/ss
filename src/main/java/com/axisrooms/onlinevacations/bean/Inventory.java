@@ -18,18 +18,19 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class  Inventory {
+public class Inventory {
     @JsonProperty("startDate")
-   // @JsonFormat(pattern = Constants.DATE_PATTERN)
+    // @JsonFormat(pattern = Constants.DATE_PATTERN)
     private String startDate;
 
     @JsonProperty("endDate")
-  //  @JsonFormat(pattern = Constants.DATE_PATTERN)
+    //  @JsonFormat(pattern = Constants.DATE_PATTERN)
     private String endDate;
     @JsonProperty("inventory")
     private Integer inventory;
-    @JsonProperty("ratePlanId")
+   /* @JsonProperty("ratePlanId")
     private String ratePlanId;
     @JsonProperty("closedDates")
-    private List<Period> closedDates;
+    private List<Period> closedDates;*/
 }
+
