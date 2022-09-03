@@ -141,6 +141,12 @@ Response:*/
     private String EXTRACHILD3;
 
 
+    private String base_occupancy;
+    private String lesser_occupancy;
+    private String extra_adults;
+    private String kids;
+
+
     public void setPriceByOccupancyName(String occupancyName, String price) throws OccupancyNotSupportedException {
         switch (occupancyName.toLowerCase()) {
             case "single":
@@ -236,6 +242,7 @@ Response:*/
             case "extrachild3":
                 this.setEXTRACHILD3(price);
                 break;
+
             default:
                 throw new OccupancyNotSupportedException(occupancyName + " occupancy is not supported");
         }
